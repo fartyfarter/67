@@ -1,0 +1,261 @@
+-- Mobile Version Speed GUI
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Variables
+local speedEnabled = false
+local speedValue = 16
+local originalWalkSpeed = 16
+local speedConnection
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MobileSpeedGUI"
+screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
+
+-- Main Frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Parent = screenGui
+mainFrame.Size = UDim2.new(0, 300, 0, 200)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+
+-- Add corner radius
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 12)
+mainCorner.Parent = mainFrame
+
+-- Title Bar
+local titleBar = Instance.new("Frame")
+titleBar.Name = "TitleBar"
+titleBar.Parent = mainFrame
+titleBar.Size = UDim2.new(1, 0, 0, 40)
+titleBar.Position = UDim2.new(0, 0, 0, 0)
+titleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+titleBar.BorderSizePixel = 0
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 12)
+titleCorner.Parent = titleBar
+
+-- Title Label
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "TitleLabel"
+titleLabel.Parent = titleBar
+titleLabel.Size = UDim2.new(1, -50, 1, 0)
+titleLabel.Position = UDim2.new(0, 10, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Mobile Version"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextScaled = true
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Parent = titleBar
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 85, 85)
+closeButton.BorderSizePixel = 0
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.TextScaled = true
+closeButton.Font = Enum.Font.GothamBold
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeButton
+
+-- Content Frame
+local contentFrame = Instance.new("Frame")
+contentFrame.Name = "ContentFrame"
+contentFrame.Parent = mainFrame
+contentFrame.Size = UDim2.new(1, -20, 1, -60)
+contentFrame.Position = UDim2.new(0, 10, 0, 50)
+contentFrame.BackgroundTransparency = 1
+
+-- Speed Input Label
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Name = "SpeedLabel"
+speedLabel.Parent = contentFrame
+speedLabel.Size = UDim2.new(1, 0, 0, 25)
+speedLabel.Position = UDim2.new(0, 0, 0, 10)
+speedLabel.BackgroundTransparency = 1
+speedLabel.Text = "Enter Speed:"
+speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedLabel.TextScaled = true
+speedLabel.Font = Enum.Font.Gotham
+speedLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Speed TextBox
+local speedTextBox = Instance.new("TextBox")
+speedTextBox.Name = "SpeedTextBox"
+speedTextBox.Parent = contentFrame
+speedTextBox.Size = UDim2.new(1, 0, 0, 35)
+speedTextBox.Position = UDim2.new(0, 0, 0, 40)
+speedTextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+speedTextBox.BorderSizePixel = 0
+speedTextBox.Text = "16"
+speedTextBox.PlaceholderText = "Enter speed value..."
+speedTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedTextBox.TextScaled = true
+speedTextBox.Font = Enum.Font.Gotham
+speedTextBox.ClearTextOnFocus = false
+
+local textBoxCorner = Instance.new("UICorner")
+textBoxCorner.CornerRadius = UDim.new(0, 8)
+textBoxCorner.Parent = speedTextBox
+
+-- Toggle Frame (Bigger toggle)
+local toggleFrame = Instance.new("Frame")
+toggleFrame.Name = "ToggleFrame"
+toggleFrame.Parent = contentFrame
+toggleFrame.Size = UDim2.new(1, 0, 0, 60)
+toggleFrame.Position = UDim2.new(0, 0, 0, 90)
+toggleFrame.BackgroundTransparency = 1
+
+-- Toggle Button (Acts as toggle)
+local toggleButton = Instance.new("TextButton")
+toggleButton.Name = "ToggleButton"
+toggleButton.Parent = toggleFrame
+toggleButton.Size = UDim2.new(1, 0, 1, 0)
+toggleButton.Position = UDim2.new(0, 0, 0, 0)
+toggleButton.BackgroundColor3 = Color3.fromRGB(255, 85, 85)
+toggleButton.BorderSizePixel = 0
+toggleButton.Text = "SPEED: OFF"
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.TextScaled = true
+toggleButton.Font = Enum.Font.GothamBold
+
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(0, 12)
+toggleCorner.Parent = toggleButton
+
+-- Functions
+local function updateSpeed()
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        if speedEnabled then
+            player.Character.Humanoid.WalkSpeed = speedValue
+        else
+            player.Character.Humanoid.WalkSpeed = originalWalkSpeed
+        end
+    end
+end
+
+local function toggleSpeed()
+    speedEnabled = not speedEnabled
+    
+    if speedEnabled then
+        -- Enable speed
+        toggleButton.BackgroundColor3 = Color3.fromRGB(85, 255, 85)
+        toggleButton.Text = "SPEED: ON"
+        speedConnection = RunService.RenderStepped:Connect(updateSpeed)
+    else
+        -- Disable speed
+        toggleButton.BackgroundColor3 = Color3.fromRGB(255, 85, 85)
+        toggleButton.Text = "SPEED: OFF"
+        if speedConnection then
+            speedConnection:Disconnect()
+            speedConnection = nil
+        end
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = originalWalkSpeed
+        end
+    end
+    
+    -- Animate button press
+    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, true)
+    local tween = TweenService:Create(toggleButton, tweenInfo, {Size = UDim2.new(0.95, 0, 0.95, 0)})
+    tween:Play()
+end
+
+-- Event Connections
+toggleButton.MouseButton1Click:Connect(toggleSpeed)
+
+speedTextBox.FocusLost:Connect(function(enterPressed)
+    local newSpeed = tonumber(speedTextBox.Text)
+    if newSpeed and newSpeed > 0 then
+        speedValue = newSpeed
+    else
+        speedTextBox.Text = tostring(speedValue)
+    end
+end)
+
+closeButton.MouseButton1Click:Connect(function()
+    -- Animate close
+    local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+    local tween = TweenService:Create(mainFrame, tweenInfo, {
+        Size = UDim2.new(0, 0, 0, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 0)
+    })
+    tween:Play()
+    
+    tween.Completed:Connect(function()
+        screenGui:Destroy()
+    end)
+    
+    -- Clean up connections
+    if speedConnection then
+        speedConnection:Disconnect()
+    end
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = originalWalkSpeed
+    end
+end)
+
+-- Store original walkspeed
+if player.Character and player.Character:FindFirstChild("Humanoid") then
+    originalWalkSpeed = player.Character.Humanoid.WalkSpeed
+end
+
+player.CharacterAdded:Connect(function(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    originalWalkSpeed = humanoid.WalkSpeed
+end)
+
+-- Animate GUI opening
+mainFrame.Size = UDim2.new(0, 0, 0, 0)
+mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+
+local openTween = TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    Size = UDim2.new(0, 300, 0, 200),
+    Position = UDim2.new(0.5, -150, 0.5, -100)
+})
+openTween:Play()
+
+-- Add hover effects
+closeButton.MouseEnter:Connect(function()
+    TweenService:Create(closeButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 120, 120)}):Play()
+end)
+
+closeButton.MouseLeave:Connect(function()
+    TweenService:Create(closeButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 85, 85)}):Play()
+end)
+
+toggleButton.MouseEnter:Connect(function()
+    if speedEnabled then
+        TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(120, 255, 120)}):Play()
+    else
+        TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 120, 120)}):Play()
+    end
+end)
+
+toggleButton.MouseLeave:Connect(function()
+    if speedEnabled then
+        TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(85, 255, 85)}):Play()
+    else
+        TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 85, 85)}):Play()
+    end
+end)
