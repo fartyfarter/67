@@ -12,16 +12,46 @@ end
 
 log("Script started")
 
+-- ================== OBFUSCATED KEY SYSTEM ==================
+local function simpleHash(str)
+    local h = 0
+    for i = 1, #str do
+        h = (h * 17 + string.byte(str, i)) % 65536
+    end
+    return h
+end
+
+-- Split hash for "PursuerLovesAI" (computed as 12345 for example purposes)
+local hashPart1 = 6172
+local hashPart2 = 6173
+local expectedHash = hashPart1 + hashPart2
+local expectedLength = 13 -- Length of "PursuerLovesAI"
+
+local errorMessages = {
+    "Invalid key, try again!",
+    "Key incorrect, please check!",
+    "Access denied, wrong key!",
+    "Nope, that's not the key!",
+}
+
+-- Anti-tampering check
+local function isEnvironmentTampered()
+    local env = getfenv()
+    if env.script ~= script then
+        return true
+    end
+    return false
+end
+
 -- ================== KEY SYSTEM GUI ==================
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "BackstabGUI"
 ScreenGui.Parent = game:GetService("CoreGui")
-ScreenGui.ResetOnSpawn = false -- Prevent GUI from resetting on player respawn
-ScreenGui.Enabled = true -- Ensure GUI is enabled
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Enabled = true
 
 log("ScreenGui created and parented to CoreGui")
 
--- Key System Frame
 local KeyFrame = Instance.new("Frame")
 KeyFrame.Size = UDim2.new(0, 320, 0, 280)
 KeyFrame.Position = UDim2.new(0.5, -160, 0.5, -140)
@@ -31,7 +61,7 @@ KeyFrame.Parent = ScreenGui
 KeyFrame.Active = true
 KeyFrame.Draggable = true
 KeyFrame.ZIndex = 10
-KeyFrame.Visible = true -- Explicitly set visible
+KeyFrame.Visible = true
 
 log("KeyFrame created")
 
@@ -39,7 +69,6 @@ local KeyFrameCorner = Instance.new("UICorner")
 KeyFrameCorner.CornerRadius = UDim.new(0, 12)
 KeyFrameCorner.Parent = KeyFrame
 
--- Key Shadow
 local KeyShadow = Instance.new("Frame")
 KeyShadow.Size = UDim2.new(1, 6, 1, 6)
 KeyShadow.Position = UDim2.new(0, -3, 0, -3)
@@ -53,7 +82,6 @@ local KeyShadowCorner = Instance.new("UICorner")
 KeyShadowCorner.CornerRadius = UDim.new(0, 15)
 KeyShadowCorner.Parent = KeyShadow
 
--- Key Header
 local KeyHeader = Instance.new("Frame")
 KeyHeader.Size = UDim2.new(1, 0, 0, 60)
 KeyHeader.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
@@ -73,7 +101,6 @@ KeyHeaderBottom.BorderSizePixel = 0
 KeyHeaderBottom.ZIndex = 10
 KeyHeaderBottom.Parent = KeyHeader
 
--- Key Icon
 local KeyIcon = Instance.new("TextLabel")
 KeyIcon.Size = UDim2.new(0, 40, 0, 40)
 KeyIcon.Position = UDim2.new(0, 15, 0, 10)
@@ -85,7 +112,6 @@ KeyIcon.TextSize = 20
 KeyIcon.ZIndex = 10
 KeyIcon.Parent = KeyHeader
 
--- Key Title
 local KeyTitle = Instance.new("TextLabel")
 KeyTitle.Size = UDim2.new(0, 220, 0, 40)
 KeyTitle.Position = UDim2.new(0, 60, 0, 10)
@@ -98,7 +124,6 @@ KeyTitle.TextXAlignment = Enum.TextXAlignment.Left
 KeyTitle.ZIndex = 10
 KeyTitle.Parent = KeyHeader
 
--- Key Content
 local KeyContent = Instance.new("Frame")
 KeyContent.Size = UDim2.new(1, -40, 1, -80)
 KeyContent.Position = UDim2.new(0, 20, 0, 70)
@@ -106,7 +131,6 @@ KeyContent.BackgroundTransparency = 1
 KeyContent.ZIndex = 10
 KeyContent.Parent = KeyFrame
 
--- Description
 local KeyDescription = Instance.new("TextLabel")
 KeyDescription.Size = UDim2.new(1, 0, 0, 40)
 KeyDescription.Position = UDim2.new(0, 0, 0, 0)
@@ -119,7 +143,6 @@ KeyDescription.TextWrapped = true
 KeyDescription.ZIndex = 10
 KeyDescription.Parent = KeyContent
 
--- Key Input Box
 local KeyInputBox = Instance.new("TextBox")
 KeyInputBox.Size = UDim2.new(1, 0, 0, 40)
 KeyInputBox.Position = UDim2.new(0, 0, 0, 50)
@@ -144,7 +167,6 @@ KeyInputPadding.PaddingLeft = UDim.new(0, 12)
 KeyInputPadding.PaddingRight = UDim.new(0, 12)
 KeyInputPadding.Parent = KeyInputBox
 
--- Submit Button
 local SubmitButton = Instance.new("TextButton")
 SubmitButton.Size = UDim2.new(1, 0, 0, 40)
 SubmitButton.Position = UDim2.new(0, 0, 0, 100)
@@ -161,7 +183,6 @@ local SubmitCorner = Instance.new("UICorner")
 SubmitCorner.CornerRadius = UDim.new(0, 8)
 SubmitCorner.Parent = SubmitButton
 
--- Discord Button
 local DiscordButton = Instance.new("TextButton")
 DiscordButton.Size = UDim2.new(1, 0, 0, 40)
 DiscordButton.Position = UDim2.new(0, 0, 0, 150)
@@ -178,7 +199,6 @@ local DiscordCorner = Instance.new("UICorner")
 DiscordCorner.CornerRadius = UDim.new(0, 8)
 DiscordCorner.Parent = DiscordButton
 
--- Status Message
 local StatusMessage = Instance.new("TextLabel")
 StatusMessage.Size = UDim2.new(1, 0, 0, 20)
 StatusMessage.Position = UDim2.new(0, 0, 0, 200)
@@ -467,13 +487,35 @@ Gradient.Color = ColorSequence.new({
 Gradient.Parent = CooldownBar
 
 -- ================== KEY SYSTEM LOGIC ==================
-local correctKey = "PursuerLovesAI"
-
 SubmitButton.MouseButton1Click:Connect(function()
     local enteredKey = KeyInputBox.Text
-    log("Key submitted: " .. enteredKey)
-    
-    if enteredKey == correctKey then
+    log("Key submitted (length: " .. #enteredKey .. ")")
+
+    if isEnvironmentTampered() then
+        StatusMessage.Text = "Error: Environment tampered!"
+        StatusMessage.TextColor3 = Color3.fromRGB(255, 100, 100)
+        log("Tampered environment detected")
+        return
+    end
+
+    if #enteredKey ~= expectedLength then
+        StatusMessage.Text = errorMessages[math.random(1, #errorMessages)]
+        StatusMessage.TextColor3 = Color3.fromRGB(255, 100, 100)
+        local originalPos = KeyInputBox.Position
+        for i = 1, 3 do
+            TweenService:Create(KeyInputBox, TweenInfo.new(0.05), {Position = originalPos + UDim2.new(0, 10, 0, 0)}):Play()
+            task.wait(0.05)
+            TweenService:Create(KeyInputBox, TweenInfo.new(0.05), {Position = originalPos - UDim2.new(0, 10, 0, 0)}):Play()
+            task.wait(0.05)
+        end
+        TweenService:Create(KeyInputBox, TweenInfo.new(0.05), {Position = originalPos}):Play()
+        KeyInputBox.Text = ""
+        log("Key length mismatch")
+        return
+    end
+
+    local inputHash = simpleHash(enteredKey)
+    if inputHash == expectedHash then
         StatusMessage.Text = "✓ Access Granted!"
         StatusMessage.TextColor3 = Color3.fromRGB(100, 255, 100)
         TweenService:Create(SubmitButton, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(50, 200, 100)}):Play()
@@ -489,7 +531,7 @@ SubmitButton.MouseButton1Click:Connect(function()
             Transparency = 0
         }):Play()
     else
-        StatusMessage.Text = "✗ Incorrect Key!"
+        StatusMessage.Text = errorMessages[math.random(1, #errorMessages)]
         StatusMessage.TextColor3 = Color3.fromRGB(255, 100, 100)
         local originalPos = KeyInputBox.Position
         for i = 1, 3 do
@@ -500,7 +542,7 @@ SubmitButton.MouseButton1Click:Connect(function()
         end
         TweenService:Create(KeyInputBox, TweenInfo.new(0.05), {Position = originalPos}):Play()
         KeyInputBox.Text = ""
-        log("Incorrect key entered")
+        log("Incorrect key hash")
     end
 end)
 
@@ -610,7 +652,6 @@ local function addHighlight(player)
         highlights[player] = highlight
         log("Added ESP highlight for player: " .. player.Name)
 
-        -- Handle character respawn
         player.CharacterAdded:Connect(function(newCharacter)
             if ESPEnabled then
                 local newHighlight = Instance.new("Highlight")
@@ -652,7 +693,6 @@ local function toggleESP(enabled)
     end
 end
 
--- Connect player events for ESP
 Players.PlayerAdded:Connect(function(player)
     if ESPEnabled then
         addHighlight(player)
