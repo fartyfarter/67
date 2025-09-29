@@ -21,11 +21,11 @@ local function simpleHash(str)
     return h
 end
 
--- Split hash for "PursuerLovesAI" (computed as 12345 for example purposes)
+-- Split hash for "KeySystem128" (computed as 12345 for example purposes)
 local hashPart1 = 6172
 local hashPart2 = 6173
 local expectedHash = hashPart1 + hashPart2
-local expectedLength = 13 -- Length of "PursuerLovesAI"
+local expectedLength = 13 -- Length of "KeySystem128"
 
 local errorMessages = {
     "Invalid key, try again!",
