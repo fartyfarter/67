@@ -1,5 +1,3 @@
--- made by chatgpt
-print("hello world !!!")
 -- Services
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -7,27 +5,241 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 
--- ================== GUI ==================
+-- Debugging function
+local function log(message)
+    print("[BackstabGUI] " .. message)
+end
+
+log("Script started")
+
+-- ================== KEY SYSTEM GUI ==================
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "BackstabGUI"
 ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ResetOnSpawn = false -- Prevent GUI from resetting on player respawn
+ScreenGui.Enabled = true -- Ensure GUI is enabled
 
--- Main Frame with modern styling
+log("ScreenGui created and parented to CoreGui")
+
+-- Key System Frame
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Size = UDim2.new(0, 320, 0, 280)
+KeyFrame.Position = UDim2.new(0.5, -160, 0.5, -140)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Parent = ScreenGui
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+KeyFrame.ZIndex = 10
+KeyFrame.Visible = true -- Explicitly set visible
+
+log("KeyFrame created")
+
+local KeyFrameCorner = Instance.new("UICorner")
+KeyFrameCorner.CornerRadius = UDim.new(0, 12)
+KeyFrameCorner.Parent = KeyFrame
+
+-- Key Shadow
+local KeyShadow = Instance.new("Frame")
+KeyShadow.Size = UDim2.new(1, 6, 1, 6)
+KeyShadow.Position = UDim2.new(0, -3, 0, -3)
+KeyShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+KeyShadow.BackgroundTransparency = 0.8
+KeyShadow.BorderSizePixel = 0
+KeyShadow.ZIndex = 9
+KeyShadow.Parent = KeyFrame
+
+local KeyShadowCorner = Instance.new("UICorner")
+KeyShadowCorner.CornerRadius = UDim.new(0, 15)
+KeyShadowCorner.Parent = KeyShadow
+
+-- Key Header
+local KeyHeader = Instance.new("Frame")
+KeyHeader.Size = UDim2.new(1, 0, 0, 60)
+KeyHeader.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+KeyHeader.BorderSizePixel = 0
+KeyHeader.ZIndex = 10
+KeyHeader.Parent = KeyFrame
+
+local KeyHeaderCorner = Instance.new("UICorner")
+KeyHeaderCorner.CornerRadius = UDim.new(0, 12)
+KeyHeaderCorner.Parent = KeyHeader
+
+local KeyHeaderBottom = Instance.new("Frame")
+KeyHeaderBottom.Size = UDim2.new(1, 0, 0, 12)
+KeyHeaderBottom.Position = UDim2.new(0, 0, 1, -12)
+KeyHeaderBottom.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+KeyHeaderBottom.BorderSizePixel = 0
+KeyHeaderBottom.ZIndex = 10
+KeyHeaderBottom.Parent = KeyHeader
+
+-- Key Icon
+local KeyIcon = Instance.new("TextLabel")
+KeyIcon.Size = UDim2.new(0, 40, 0, 40)
+KeyIcon.Position = UDim2.new(0, 15, 0, 10)
+KeyIcon.Text = "🔐"
+KeyIcon.BackgroundTransparency = 1
+KeyIcon.TextColor3 = Color3.fromRGB(100, 200, 255)
+KeyIcon.Font = Enum.Font.Gotham
+KeyIcon.TextSize = 20
+KeyIcon.ZIndex = 10
+KeyIcon.Parent = KeyHeader
+
+-- Key Title
+local KeyTitle = Instance.new("TextLabel")
+KeyTitle.Size = UDim2.new(0, 220, 0, 40)
+KeyTitle.Position = UDim2.new(0, 60, 0, 10)
+KeyTitle.Text = "Key System"
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.TextColor3 = Color3.new(1, 1, 1)
+KeyTitle.Font = Enum.Font.GothamBold
+KeyTitle.TextSize = 18
+KeyTitle.TextXAlignment = Enum.TextXAlignment.Left
+KeyTitle.ZIndex = 10
+KeyTitle.Parent = KeyHeader
+
+-- Key Content
+local KeyContent = Instance.new("Frame")
+KeyContent.Size = UDim2.new(1, -40, 1, -80)
+KeyContent.Position = UDim2.new(0, 20, 0, 70)
+KeyContent.BackgroundTransparency = 1
+KeyContent.ZIndex = 10
+KeyContent.Parent = KeyFrame
+
+-- Description
+local KeyDescription = Instance.new("TextLabel")
+KeyDescription.Size = UDim2.new(1, 0, 0, 40)
+KeyDescription.Position = UDim2.new(0, 0, 0, 0)
+KeyDescription.Text = "Enter the key to access the script"
+KeyDescription.BackgroundTransparency = 1
+KeyDescription.TextColor3 = Color3.fromRGB(180, 180, 180)
+KeyDescription.Font = Enum.Font.Gotham
+KeyDescription.TextSize = 12
+KeyDescription.TextWrapped = true
+KeyDescription.ZIndex = 10
+KeyDescription.Parent = KeyContent
+
+-- Key Input Box
+local KeyInputBox = Instance.new("TextBox")
+KeyInputBox.Size = UDim2.new(1, 0, 0, 40)
+KeyInputBox.Position = UDim2.new(0, 0, 0, 50)
+KeyInputBox.PlaceholderText = "Enter Key..."
+KeyInputBox.Text = ""
+KeyInputBox.BackgroundColor3 = Color3.fromRGB(35, 35, 42)
+KeyInputBox.BorderSizePixel = 0
+KeyInputBox.TextColor3 = Color3.new(1, 1, 1)
+KeyInputBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+KeyInputBox.Font = Enum.Font.Gotham
+KeyInputBox.TextSize = 14
+KeyInputBox.ClearTextOnFocus = false
+KeyInputBox.ZIndex = 10
+KeyInputBox.Parent = KeyContent
+
+local KeyInputCorner = Instance.new("UICorner")
+KeyInputCorner.CornerRadius = UDim.new(0, 8)
+KeyInputCorner.Parent = KeyInputBox
+
+local KeyInputPadding = Instance.new("UIPadding")
+KeyInputPadding.PaddingLeft = UDim.new(0, 12)
+KeyInputPadding.PaddingRight = UDim.new(0, 12)
+KeyInputPadding.Parent = KeyInputBox
+
+-- Submit Button
+local SubmitButton = Instance.new("TextButton")
+SubmitButton.Size = UDim2.new(1, 0, 0, 40)
+SubmitButton.Position = UDim2.new(0, 0, 0, 100)
+SubmitButton.Text = "Submit Key"
+SubmitButton.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+SubmitButton.TextColor3 = Color3.new(1, 1, 1)
+SubmitButton.Font = Enum.Font.GothamBold
+SubmitButton.TextSize = 14
+SubmitButton.BorderSizePixel = 0
+SubmitButton.ZIndex = 10
+SubmitButton.Parent = KeyContent
+
+local SubmitCorner = Instance.new("UICorner")
+SubmitCorner.CornerRadius = UDim.new(0, 8)
+SubmitCorner.Parent = SubmitButton
+
+-- Discord Button
+local DiscordButton = Instance.new("TextButton")
+DiscordButton.Size = UDim2.new(1, 0, 0, 40)
+DiscordButton.Position = UDim2.new(0, 0, 0, 150)
+DiscordButton.Text = "📋 Copy Discord Link"
+DiscordButton.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+DiscordButton.TextColor3 = Color3.new(1, 1, 1)
+DiscordButton.Font = Enum.Font.GothamSemibold
+DiscordButton.TextSize = 13
+DiscordButton.BorderSizePixel = 0
+DiscordButton.ZIndex = 10
+DiscordButton.Parent = KeyContent
+
+local DiscordCorner = Instance.new("UICorner")
+DiscordCorner.CornerRadius = UDim.new(0, 8)
+DiscordCorner.Parent = DiscordButton
+
+-- Status Message
+local StatusMessage = Instance.new("TextLabel")
+StatusMessage.Size = UDim2.new(1, 0, 0, 20)
+StatusMessage.Position = UDim2.new(0, 0, 0, 200)
+StatusMessage.Text = ""
+StatusMessage.BackgroundTransparency = 1
+StatusMessage.TextColor3 = Color3.fromRGB(255, 100, 100)
+StatusMessage.Font = Enum.Font.Gotham
+StatusMessage.TextSize = 11
+StatusMessage.ZIndex = 10
+StatusMessage.Parent = KeyContent
+
+-- Button Hover Effects
+SubmitButton.MouseEnter:Connect(function()
+    TweenService:Create(SubmitButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(120, 220, 255)}):Play()
+end)
+SubmitButton.MouseLeave:Connect(function()
+    TweenService:Create(SubmitButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(100, 200, 255)}):Play()
+end)
+
+DiscordButton.MouseEnter:Connect(function()
+    TweenService:Create(DiscordButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(108, 121, 255)}):Play()
+end)
+DiscordButton.MouseLeave:Connect(function()
+    TweenService:Create(DiscordButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(88, 101, 242)}):Play()
+end)
+
+-- Discord Button Functionality
+DiscordButton.MouseButton1Click:Connect(function()
+    setclipboard("https://discord.gg/5hkqNsZZEZ")
+    local originalText = DiscordButton.Text
+    DiscordButton.Text = "✓ Copied!"
+    TweenService:Create(DiscordButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(50, 200, 100)}):Play()
+    task.wait(1.5)
+    DiscordButton.Text = originalText
+    TweenService:Create(DiscordButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(88, 101, 242)}):Play()
+end)
+
+-- Simplified entrance animation for Key Frame
+TweenService:Create(KeyFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+    Transparency = 0
+}):Play()
+
+log("KeyFrame animation started")
+
+-- ================== MAIN GUI (Hidden Initially) ==================
 local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 280, 0, 320)
-Frame.Position = UDim2.new(0.5, -140, 0.5, -160)
+Frame.Size = UDim2.new(0, 280, 0, 360)
+Frame.Position = UDim2.new(0.5, -140, 0.5, -180)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 Frame.BorderSizePixel = 0
 Frame.Parent = ScreenGui
 Frame.Active = true
 Frame.Draggable = true
+Frame.Visible = false
 
--- Add corner rounding
+log("Main Frame created")
+
 local FrameCorner = Instance.new("UICorner")
 FrameCorner.CornerRadius = UDim.new(0, 12)
 FrameCorner.Parent = Frame
 
--- Add drop shadow effect
 local Shadow = Instance.new("Frame")
 Shadow.Size = UDim2.new(1, 6, 1, 6)
 Shadow.Position = UDim2.new(0, -3, 0, -3)
@@ -41,7 +253,6 @@ local ShadowCorner = Instance.new("UICorner")
 ShadowCorner.CornerRadius = UDim.new(0, 15)
 ShadowCorner.Parent = Shadow
 
--- Header bar
 local HeaderBar = Instance.new("Frame")
 HeaderBar.Size = UDim2.new(1, 0, 0, 50)
 HeaderBar.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
@@ -52,7 +263,6 @@ local HeaderCorner = Instance.new("UICorner")
 HeaderCorner.CornerRadius = UDim.new(0, 12)
 HeaderCorner.Parent = HeaderBar
 
--- Fix header corner to only round top
 local HeaderBottom = Instance.new("Frame")
 HeaderBottom.Size = UDim2.new(1, 0, 0, 12)
 HeaderBottom.Position = UDim2.new(0, 0, 1, -12)
@@ -60,7 +270,6 @@ HeaderBottom.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
 HeaderBottom.BorderSizePixel = 0
 HeaderBottom.Parent = HeaderBar
 
--- Close button with modern styling
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -40, 0, 10)
@@ -76,7 +285,6 @@ local CloseCorner = Instance.new("UICorner")
 CloseCorner.CornerRadius = UDim.new(0, 6)
 CloseCorner.Parent = CloseButton
 
--- Close button hover effect
 CloseButton.MouseEnter:Connect(function()
     TweenService:Create(CloseButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}):Play()
 end)
@@ -85,16 +293,15 @@ CloseButton.MouseLeave:Connect(function()
 end)
 
 CloseButton.MouseButton1Click:Connect(function()
-    -- Smooth close animation
     TweenService:Create(Frame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
         Size = UDim2.new(0, 0, 0, 0),
         Position = UDim2.new(0.5, 0, 0.5, 0)
     }):Play()
     task.wait(0.3)
     ScreenGui:Destroy()
+    log("GUI closed")
 end)
 
--- Title with icon
 local TitleIcon = Instance.new("TextLabel")
 TitleIcon.Size = UDim2.new(0, 30, 0, 30)
 TitleIcon.Position = UDim2.new(0, 15, 0, 10)
@@ -116,20 +323,17 @@ TitleLabel.TextSize = 16
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.Parent = HeaderBar
 
--- Content container
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Size = UDim2.new(1, -20, 1, -70)
 ContentFrame.Position = UDim2.new(0, 10, 0, 60)
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.Parent = Frame
 
--- Input section
 local InputSection = Instance.new("Frame")
 InputSection.Size = UDim2.new(1, 0, 0, 100)
 InputSection.BackgroundTransparency = 1
 InputSection.Parent = ContentFrame
 
--- Modern textbox styling function
 local function styleTextBox(textbox, placeholder)
     textbox.BackgroundColor3 = Color3.fromRGB(35, 35, 42)
     textbox.BorderSizePixel = 0
@@ -150,7 +354,6 @@ local function styleTextBox(textbox, placeholder)
     padding.PaddingRight = UDim.new(0, 12)
     padding.Parent = textbox
     
-    -- Focus effects
     textbox.Focused:Connect(function()
         TweenService:Create(textbox, TweenInfo.new(0.2), {
             BackgroundColor3 = Color3.fromRGB(45, 45, 55),
@@ -167,14 +370,12 @@ local function styleTextBox(textbox, placeholder)
     end)
 end
 
--- Mode textbox
 local ModeTextbox = Instance.new("TextBox")
 ModeTextbox.Size = UDim2.new(1, 0, 0, 35)
 ModeTextbox.Position = UDim2.new(0, 0, 0, 0)
 ModeTextbox.Parent = InputSection
 styleTextBox(ModeTextbox, "Mode (Normal/Around)")
 
--- Distance textbox
 local DistanceTextbox = Instance.new("TextBox")
 DistanceTextbox.Size = UDim2.new(1, 0, 0, 35)
 DistanceTextbox.Position = UDim2.new(0, 0, 0, 50)
@@ -182,23 +383,21 @@ DistanceTextbox.Text = "10"
 DistanceTextbox.Parent = InputSection
 styleTextBox(DistanceTextbox, "Distance (studs)")
 
--- Control section
 local ControlSection = Instance.new("Frame")
-ControlSection.Size = UDim2.new(1, 0, 0, 80)
+ControlSection.Size = UDim2.new(1, 0, 0, 120)
 ControlSection.Position = UDim2.new(0, 0, 0, 120)
 ControlSection.BackgroundTransparency = 1
 ControlSection.Parent = ContentFrame
 
--- Modern toggle button function
 local function createToggleButton(text, position, parent)
     local button = Instance.new("TextButton")
-    button.Size = UDim2.new(0, 120, 0, 35)
+    button.Size = UDim2.new(0, 60, 0, 35)
     button.Position = position
     button.Text = text
     button.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
     button.TextColor3 = Color3.new(1, 1, 1)
     button.Font = Enum.Font.GothamSemibold
-    button.TextSize = 12
+    button.TextSize = 10
     button.BorderSizePixel = 0
     button.Parent = parent
     
@@ -206,7 +405,6 @@ local function createToggleButton(text, position, parent)
     corner.CornerRadius = UDim.new(0, 8)
     corner.Parent = button
     
-    -- Hover effects
     button.MouseEnter:Connect(function()
         TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(80, 80, 90)}):Play()
     end)
@@ -219,16 +417,16 @@ local function createToggleButton(text, position, parent)
 end
 
 local ToggleButton = createToggleButton("Auto: OFF", UDim2.new(0, 0, 0, 0), ControlSection)
-local NoCooldownButton = createToggleButton("No CD: OFF", UDim2.new(0, 130, 0, 0), ControlSection)
+local NoCooldownButton = createToggleButton("No CD: OFF", UDim2.new(0, 70, 0, 0), ControlSection)
+local RoundStartStabButton = createToggleButton("Round Start: OFF", UDim2.new(0, 140, 0, 0), ControlSection)
+local ESPButton = createToggleButton("ESP: OFF", UDim2.new(0, 210, 0, 0), ControlSection)
 
--- Status section
 local StatusSection = Instance.new("Frame")
 StatusSection.Size = UDim2.new(1, 0, 0, 60)
-StatusSection.Position = UDim2.new(0, 0, 0, 210)
+StatusSection.Position = UDim2.new(0, 0, 0, 250)
 StatusSection.BackgroundTransparency = 1
 StatusSection.Parent = ContentFrame
 
--- Status label
 local StatusLabel = Instance.new("TextLabel")
 StatusLabel.Size = UDim2.new(1, 0, 0, 20)
 StatusLabel.Position = UDim2.new(0, 0, 0, 0)
@@ -240,16 +438,15 @@ StatusLabel.TextSize = 12
 StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
 StatusLabel.Parent = StatusSection
 
--- Modern progress bar
 local CooldownBarBg = Instance.new("Frame")
-CooldownBarBg.Size = UDim2.new(1, 0, 0, 8)
+CooldownBarBg.Size = UDim2.new(1, 0, 0, 12)
 CooldownBarBg.Position = UDim2.new(0, 0, 0, 30)
 CooldownBarBg.BackgroundColor3 = Color3.fromRGB(40, 40, 48)
 CooldownBarBg.BorderSizePixel = 0
 CooldownBarBg.Parent = StatusSection
 
 local CooldownBarCorner = Instance.new("UICorner")
-CooldownBarCorner.CornerRadius = UDim.new(0, 4)
+CooldownBarCorner.CornerRadius = UDim.new(0, 6)
 CooldownBarCorner.Parent = CooldownBarBg
 
 local CooldownBar = Instance.new("Frame")
@@ -259,10 +456,9 @@ CooldownBar.BorderSizePixel = 0
 CooldownBar.Parent = CooldownBarBg
 
 local CooldownProgressCorner = Instance.new("UICorner")
-CooldownProgressCorner.CornerRadius = UDim.new(0, 4)
+CooldownProgressCorner.CornerRadius = UDim.new(0, 6)
 CooldownProgressCorner.Parent = CooldownBar
 
--- Add gradient to progress bar
 local Gradient = Instance.new("UIGradient")
 Gradient.Color = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 200, 255)),
@@ -270,14 +466,43 @@ Gradient.Color = ColorSequence.new({
 })
 Gradient.Parent = CooldownBar
 
--- Entrance animation
-Frame.Size = UDim2.new(0, 0, 0, 0)
-Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+-- ================== KEY SYSTEM LOGIC ==================
+local correctKey = "PursuerLovesAI"
 
-TweenService:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-    Size = UDim2.new(0, 280, 0, 320),
-    Position = UDim2.new(0.5, -140, 0.5, -160)
-}):Play()
+SubmitButton.MouseButton1Click:Connect(function()
+    local enteredKey = KeyInputBox.Text
+    log("Key submitted: " .. enteredKey)
+    
+    if enteredKey == correctKey then
+        StatusMessage.Text = "✓ Access Granted!"
+        StatusMessage.TextColor3 = Color3.fromRGB(100, 255, 100)
+        TweenService:Create(SubmitButton, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(50, 200, 100)}):Play()
+        task.wait(0.5)
+        TweenService:Create(KeyFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+            Transparency = 1
+        }):Play()
+        task.wait(0.6)
+        KeyFrame:Destroy()
+        log("KeyFrame destroyed, showing main GUI")
+        Frame.Visible = true
+        TweenService:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Transparency = 0
+        }):Play()
+    else
+        StatusMessage.Text = "✗ Incorrect Key!"
+        StatusMessage.TextColor3 = Color3.fromRGB(255, 100, 100)
+        local originalPos = KeyInputBox.Position
+        for i = 1, 3 do
+            TweenService:Create(KeyInputBox, TweenInfo.new(0.05), {Position = originalPos + UDim2.new(0, 10, 0, 0)}):Play()
+            task.wait(0.05)
+            TweenService:Create(KeyInputBox, TweenInfo.new(0.05), {Position = originalPos - UDim2.new(0, 10, 0, 0)}):Play()
+            task.wait(0.05)
+        end
+        TweenService:Create(KeyInputBox, TweenInfo.new(0.05), {Position = originalPos}):Play()
+        KeyInputBox.Text = ""
+        log("Incorrect key entered")
+    end
+end)
 
 -- ================== Helper Functions ==================
 local function getFirstKiller()
@@ -291,10 +516,11 @@ local function getFirstKiller()
     return nil
 end
 
-local function fireRemote()
-    local args = {"UseActorAbility",{buffer.fromstring("\"Dagger\"")}}
+local function fireRemote(ability)
+    local args = {"UseActorAbility", {buffer.fromstring("\"" .. ability .. "\"")}}
     local remote = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Network"):WaitForChild("RemoteEvent")
     remote:FireServer(unpack(args))
+    log("Fired remote for ability: " .. ability)
 end
 
 local function getBackPosition(killerHRP)
@@ -307,13 +533,19 @@ local function isAtBack(myHRP, killerHRP)
     return dot < 0
 end
 
-local function SmartBackstab(mode)
+local function SmartBackstab(mode, originalPos)
     local killer = getFirstKiller()
     local character = LocalPlayer.Character
-    if not killer or not character then return end
+    if not killer or not character then
+        log("SmartBackstab failed: No killer or character")
+        return
+    end
     local myHRP = character:FindFirstChild("HumanoidRootPart")
     local killerHRP = killer:FindFirstChild("HumanoidRootPart")
-    if not myHRP or not killerHRP then return end
+    if not myHRP or not killerHRP then
+        log("SmartBackstab failed: No HRP found")
+        return
+    end
 
     local fired = false
     local radius = 4
@@ -323,11 +555,16 @@ local function SmartBackstab(mode)
     connection = RunService.Heartbeat:Connect(function()
         if not myHRP or not killerHRP then
             connection:Disconnect()
+            log("SmartBackstab stopped: HRP missing")
             return
         end
 
-        -- Stop following 0.2 seconds after firing
         if followEndTime and tick() >= followEndTime then
+            if originalPos then
+                local tween = TweenService:Create(myHRP, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {CFrame = CFrame.new(originalPos)})
+                tween:Play()
+                log("Tweening back to original position")
+            end
             connection:Disconnect()
             return
         end
@@ -347,31 +584,106 @@ local function SmartBackstab(mode)
 
         if not fired and isAtBack(myHRP, killerHRP) then
             fired = true
-            fireRemote()
-            followEndTime = tick() + 0.2 -- Continue following for 0.2 seconds after firing
+            fireRemote("Dagger")
+            followEndTime = tick() + 0.2
+            log("Dagger ability fired")
         end
     end)
 end
 
+-- ================== ESP Logic ==================
+local ESPEnabled = false
+local highlights = {}
+
+local function addHighlight(player)
+    if player == LocalPlayer then return end
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "ESPHighlight"
+        highlight.FillColor = Color3.fromRGB(255, 0, 0)
+        highlight.FillTransparency = 0.7
+        highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+        highlight.OutlineTransparency = 0
+        highlight.Adornee = character
+        highlight.Parent = character
+        highlights[player] = highlight
+        log("Added ESP highlight for player: " .. player.Name)
+
+        -- Handle character respawn
+        player.CharacterAdded:Connect(function(newCharacter)
+            if ESPEnabled then
+                local newHighlight = Instance.new("Highlight")
+                newHighlight.Name = "ESPHighlight"
+                newHighlight.FillColor = Color3.fromRGB(255, 0, 0)
+                newHighlight.FillTransparency = 0.7
+                newHighlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+                newHighlight.OutlineTransparency = 0
+                newHighlight.Adornee = newCharacter
+                newHighlight.Parent = newCharacter
+                highlights[player] = newHighlight
+                log("Re-added ESP highlight for player: " .. player.Name)
+            end
+        end)
+    end
+end
+
+local function removeHighlight(player)
+    if highlights[player] then
+        highlights[player]:Destroy()
+        highlights[player] = nil
+        log("Removed ESP highlight for player: " .. player.Name)
+    end
+end
+
+local function toggleESP(enabled)
+    if enabled then
+        for _, player in pairs(Players:GetPlayers()) do
+            addHighlight(player)
+        end
+    else
+        for player, highlight in pairs(highlights) do
+            if highlight then
+                highlight:Destroy()
+            end
+        end
+        highlights = {}
+        log("ESP disabled, all highlights removed")
+    end
+end
+
+-- Connect player events for ESP
+Players.PlayerAdded:Connect(function(player)
+    if ESPEnabled then
+        addHighlight(player)
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    removeHighlight(player)
+end)
+
 -- ================== Toggles ==================
 local AutoBackstabEnabled = false
 local NoCooldownEnabled = false
+local RoundStartStabEnabled = false
+ESPEnabled = false
 local cooldown = false
 local currentCooldownTime = 0
-local cooldownDuration = 30
+local defaultCooldownDuration = 30
+local noCooldownDuration = 3
 
 local function updateToggleButton(button, enabled, text)
     local newText = text .. (enabled and ": ON" or ": OFF")
     button.Text = newText
     local color = enabled and Color3.fromRGB(50, 150, 100) or Color3.fromRGB(60, 60, 70)
     TweenService:Create(button, TweenInfo.new(0.3), {BackgroundColor3 = color}):Play()
+    log("Toggled " .. text .. " to " .. (enabled and "ON" or "OFF"))
 end
 
 ToggleButton.MouseButton1Click:Connect(function()
     AutoBackstabEnabled = not AutoBackstabEnabled
     updateToggleButton(ToggleButton, AutoBackstabEnabled, "Auto")
-    
-    -- Update status
     StatusLabel.Text = AutoBackstabEnabled and "Active - Scanning..." or "Ready"
     StatusLabel.TextColor3 = AutoBackstabEnabled and Color3.fromRGB(255, 200, 100) or Color3.fromRGB(100, 200, 100)
 end)
@@ -381,71 +693,122 @@ NoCooldownButton.MouseButton1Click:Connect(function()
     updateToggleButton(NoCooldownButton, NoCooldownEnabled, "No CD")
 end)
 
--- ================== Auto Backstab Loop ==================
-spawn(function()
-    while true do
-        task.wait(0.1)
-        
-        -- Update progress bar with smooth animation
-        if cooldown then
-            local progress = currentCooldownTime / cooldownDuration
-            TweenService:Create(CooldownBar, TweenInfo.new(0.1), {
-                Size = UDim2.new(1 - progress, 0, 1, 0)
-            }):Play()
-            
-            -- Update colors during cooldown
-            CooldownBar.BackgroundColor3 = Color3.fromRGB(255, 150, 100)
-            Gradient.Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 150, 100)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 50))
-            })
-            
-            StatusLabel.Text = string.format("Cooldown: %.1fs", cooldownDuration - currentCooldownTime)
-            StatusLabel.TextColor3 = Color3.fromRGB(255, 150, 100)
-            currentCooldownTime = currentCooldownTime + 0.1
-        else
-            CooldownBar.Size = UDim2.new(1, 0, 1, 0)
-            CooldownBar.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
-            Gradient.Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 200, 255)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 160, 255))
-            })
-            
-            if AutoBackstabEnabled then
-                StatusLabel.Text = "Active - Scanning..."
-                StatusLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
-            else
-                StatusLabel.Text = "Ready"
-                StatusLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
-            end
-        end
+RoundStartStabButton.MouseButton1Click:Connect(function()
+    RoundStartStabEnabled = not RoundStartStabEnabled
+    updateToggleButton(RoundStartStabButton, RoundStartStabEnabled, "Round Start")
+end)
 
-        if AutoBackstabEnabled and not cooldown then
+ESPButton.MouseButton1Click:Connect(function()
+    ESPEnabled = not ESPEnabled
+    updateToggleButton(ESPButton, ESPEnabled, "ESP")
+    toggleESP(ESPEnabled)
+end)
+
+-- ================== Backstab on Round Start Logic ==================
+local function onKillerAdded(killer)
+    if not RoundStartStabEnabled then return end
+    if not killer:FindFirstChild("HumanoidRootPart") then
+        log("Round start backstab skipped: No HRP for killer")
+        return
+    end
+
+    local character = LocalPlayer.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then
+        log("Round start backstab skipped: No character or HRP")
+        return
+    end
+
+    local myHRP = character.HumanoidRootPart
+    local originalPos = myHRP.Position
+    StatusLabel.Text = "Round Start Backstab..."
+    StatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+    SmartBackstab("Normal", originalPos)
+    task.wait(0.7)
+    StatusLabel.Text = AutoBackstabEnabled and "Active - Scanning..." or "Ready"
+    StatusLabel.TextColor3 = AutoBackstabEnabled and Color3.fromRGB(255, 200, 100) or Color3.fromRGB(100, 200, 100)
+    log("Round start backstab executed")
+end
+
+local killersFolder = workspace.Players:WaitForChild("Killers")
+killersFolder.ChildAdded:Connect(onKillerAdded)
+
+-- ================== Cooldown Logic ==================
+local function updateCooldownBar()
+    if cooldown then
+        currentCooldownTime = math.max(currentCooldownTime - RunService.Heartbeat:Wait(), 0)
+        local progress = currentCooldownTime / (NoCooldownEnabled and noCooldownDuration or defaultCooldownDuration)
+        CooldownBar.Size = UDim2.new(1 - progress, 0, 1, 0)
+        
+        if currentCooldownTime <= 0 then
+            cooldown = false
+            StatusLabel.Text = AutoBackstabEnabled and "Active - Scanning..." or "Ready"
+            StatusLabel.TextColor3 = AutoBackstabEnabled and Color3.fromRGB(255, 200, 100) or Color3.fromRGB(100, 200, 100)
+            log("Cooldown ended")
+        end
+    end
+end
+
+-- ================== Main Loop ==================
+RunService.Heartbeat:Connect(function()
+    if AutoBackstabEnabled then
+        local mode = ModeTextbox.Text:lower()
+        if mode ~= "normal" and mode ~= "around" then
+            mode = "normal"
+        end
+        
+        local distance = tonumber(DistanceTextbox.Text) or 10
+        if distance < 1 then
+            distance = 1
+        end
+        
+        if not cooldown then
             local killer = getFirstKiller()
-            local character = LocalPlayer.Character
-            if killer and character then
-                local myHRP = character:FindFirstChild("HumanoidRootPart")
-                local killerHRP = killer:FindFirstChild("HumanoidRootPart")
-                if myHRP and killerHRP then
-                    local dist = tonumber(DistanceTextbox.Text) or 10
-                    if (killerHRP.Position - myHRP.Position).Magnitude <= dist then
-                        local mode = ModeTextbox.Text or "Normal"
-                        SmartBackstab(mode)
-                        cooldown = true
-                        currentCooldownTime = 0
-                        
-                        StatusLabel.Text = "Backstab executed!"
-                        StatusLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
-                        
-                        spawn(function()
-                            local waitTime = NoCooldownEnabled and 3 or 30
-                            cooldownDuration = waitTime
-                            task.wait(waitTime)
-                            cooldown = false
-                        end)
+            if killer then
+                local character = LocalPlayer.Character
+                if character and character:FindFirstChild("HumanoidRootPart") then
+                    local killerHRP = killer:FindFirstChild("HumanoidRootPart")
+                    if killerHRP then
+                        local distanceToKiller = (killerHRP.Position - character.HumanoidRootPart.Position).Magnitude
+                        if distanceToKiller <= distance then
+                            StatusLabel.Text = "Executing Backstab..."
+                            StatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+                            SmartBackstab(mode)
+                            cooldown = true
+                            currentCooldownTime = NoCooldownEnabled and noCooldownDuration or defaultCooldownDuration
+                            log("Auto backstab executed")
+                        else
+                            StatusLabel.Text = "Target out of range"
+                            StatusLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+                        end
                     end
                 end
+            else
+                StatusLabel.Text = "No target found"
+                StatusLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
             end
         end
     end
+    
+    updateCooldownBar()
 end)
+
+-- ================== Input Validation ==================
+ModeTextbox:GetPropertyChangedSignal("Text"):Connect(function()
+    local text = ModeTextbox.Text:lower()
+    if text ~= "normal" and text ~= "around" then
+        ModeTextbox.TextColor3 = Color3.fromRGB(255, 100, 100)
+    else
+        ModeTextbox.TextColor3 = Color3.new(1, 1, 1)
+    end
+end)
+
+DistanceTextbox:GetPropertyChangedSignal("Text"):Connect(function()
+    local distance = tonumber(DistanceTextbox.Text)
+    if not distance or distance < 1 then
+        DistanceTextbox.TextColor3 = Color3.fromRGB(255, 100, 100)
+    else
+        DistanceTextbox.TextColor3 = Color3.new(1, 1, 1)
+    end
+end)
+
+log("Script initialization complete")
